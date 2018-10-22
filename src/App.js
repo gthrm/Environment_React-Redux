@@ -27,15 +27,25 @@ class App extends Component {
     componentWillUnmount(){
         console.log("componentWillUnmount()");
     }
-    shouldComponentUpdate(){
+    shouldComponentUpdate(nextProps, nextState){
         console.log("shouldComponentUpdate()");
         return true;
+        //вызывается каждый раз при обновлении объекта props или state.
+        //В качестве параметра передаются новый объект props и state.
+        //Эта функция должна возвращать true (надо делать обновление)
+        //или false (игнорировать обновление).
+        //По умолчанию возвращается true. Но если функция будет возвращать false,
+        //то тем самым мы отключим обновление компонента, а последующие функции
+        //не будут срабатывать.
     }
-    componentWillUpdate(){
+    componentWillUpdate(nextProps, nextState){
         console.log("componentWillUpdate()");
+        console.log('---','nextProps: ', nextProps, 'nextState: ', nextState);
+        
     }
-    componentDidUpdate(){
+    componentDidUpdate(prevProps, prevState){
         console.log("componentDidUpdate()");
+        console.log('---','prevProps: ', prevProps, 'prevState: ', prevState);
     }
 
     onChangeTel(data) {
