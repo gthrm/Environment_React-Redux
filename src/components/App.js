@@ -3,9 +3,12 @@ import InputMask from 'react-input-mask';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { changeName, changeSecondName, changeTel, changeOrg } from '../store/actions';
+import { apiPrefix } from '../etc/config.json';
+import { changeName, changeSecondName, changeTel, changeOrg, changeEmail, getInitialState } from '../store/actions';
 
 import './App.css';
+
+
 
 class App extends Component {
     
@@ -57,12 +60,33 @@ class App extends Component {
 
 
     // можно использоват для проверки заполненности номера
-    onChangeTel(data) {
-        if(data.target.value.endsWith('_') === false){
-            console.log('заполнен');
-        }
-    }
+    // onChangeTel(data) {
+    //     if(data.target.value.endsWith('_') === false){
+    //         console.log('заполнен');
+    //     }
+    // }
     //
+
+    handleClickButton(){
+        console.log(this.props);
+        if (this.props.name !== '' && this.props.secondName !== '' && this.props.email !== '' && this.props.tel !== '' && this.props.org !== '') {
+            const request = new XMLHttpRequest();
+            const body = JSON.stringify({
+                name: this.props.name,
+                secondName: this.props.secondName,
+                email: this.props.email,
+                tel: this.props.tel,
+                org: this.props.org
+            });
+            this.props.getInitialState();
+            request.open("POST", `${apiPrefix}/user`, true);
+            request.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+            request.send(body);
+        } else {
+            alert('Пожалуйста заполните все поля!');
+        }
+       
+    }
 
     render() {
         console.log('this.props в render(): ', this.props);
@@ -105,6 +129,17 @@ class App extends Component {
                 <div className="App-div-input">
                     <input
                         className="App-input"
+                        value={this.props.email}
+                        type="text"
+                        placeholder="E-mail"
+                        onChange={(event)=>{
+                            this.props.changeEmail(event.target.value);
+                        }}
+                    />
+                </div>
+                <div className="App-div-input">
+                    <input
+                        className="App-input"
                         value={this.props.org}
                         type="text"
                         placeholder="Организация"
@@ -114,9 +149,7 @@ class App extends Component {
                     />
                 </div>
                 <div>
-                    <h3>
-                        {this.props.name + ' ' + this.props.secondName + ' ' + this.props.tel + ' ' + this.props.org }
-                    </h3>
+                    <button className="App-button" onClick={()=>this.handleClickButton()}>Скачать</button>
                 </div>
             </div>
         );
@@ -128,6 +161,7 @@ const mapStateToProps = (state)=> {
     return {
       name: state.name,
       secondName: state.secondName,
+      email: state.email,
       tel: state.tel,
       org: state.org
     }
@@ -137,8 +171,10 @@ const mapDispatchToProps = (dispatch) => {
     return {
       changeName: bindActionCreators(changeName, dispatch),
       changeSecondName: bindActionCreators(changeSecondName, dispatch),
+      changeEmail: bindActionCreators(changeEmail, dispatch),
       changeTel: bindActionCreators(changeTel, dispatch),
-      changeOrg: bindActionCreators(changeOrg, dispatch)
+      changeOrg: bindActionCreators(changeOrg, dispatch),
+      getInitialState: bindActionCreators(getInitialState, dispatch)
     }
 };
 
