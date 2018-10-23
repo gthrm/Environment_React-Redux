@@ -1,6 +1,6 @@
 export const initialState = {
     name: '',
     secondName: '',
-    tel: undefined,
+    tel: '',
     org: ''
 };
